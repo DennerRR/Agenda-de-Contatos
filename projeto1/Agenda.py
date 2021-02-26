@@ -19,29 +19,49 @@ Agenda = {
 
 
 def mostrar_contato():
-    for contato in Agenda:
-        buscar_contato(contato)
-        print("------------------------------------------------------------------------------")
-
+    if Agenda:
+        for contato in Agenda:
+            buscar_contato(contato)
+            print("------------------------------------------------------------------------------")
+    else:
+        print("Agenda Vazia!")
 
 def buscar_contato(contato):
-    print("Nome:", contato)
-    print("Telefone:", Agenda[contato]["Telefone"])
-    print("E-mail: ", Agenda[contato]["E-mail"])
-    print("Endereco: ", Agenda[contato]["endereco"])
-    print("------------------------------------------------------------------------------")
+    try:
+        print("Nome:", contato)
+        print("Telefone:", Agenda[contato]["Telefone"])
+        print("E-mail: ", Agenda[contato]["E-mail"])
+        print("Endereco: ", Agenda[contato]["endereco"])
+        print("------------------------------------------------------------------------------")
+    except KeyError:
+        print("Contato Inexistente")
+    except Exception as error:
+        print("Um erro inesperado ocorreu!")
+        print(error)
 
 
-def incluir_editar_contato(contato, telefone, email, endereco):
+def incluir_editar_contato(contato):
+    telefone = input("Insire o Telefone da pessoa: ")
+    email = input("Insire o E-mail da pessoa: ")
+    endereco = input("Insire o Endereço da pessoa: ")
+
     Agenda[contato] = {
         "Telefone": telefone,
         "E-mail": email,
         "endereco": endereco
     }
 
+
 def excluir_contato(contato):
-    Agenda.pop(contato)
-    print(">>>>>>>>>>>>>>>>>>>> {} Excluido dos contatos com sucesso!".format(contato))
+    try:
+        Agenda.pop(contato)
+        print(">>>>>>>>>>>>>>>>>>>> {} Excluido dos contatos com sucesso!".format(contato))
+    except KeyError:
+        print("Contato Inexistente")
+    except Exception as error:
+        print("Um Erro inesperado ocorreu !")
+        print(error)
+
 
 def menu():
     print("_______________________________________")
@@ -57,27 +77,38 @@ def menu():
     print("|_____________________________________|")
 
 
+while True:
+    menu()
+    opcao = input("Escolha uma opção: ")
+    if opcao == "1":
+        mostrar_contato()
+    elif opcao =="2":
+        contato = input("Qual o nome do contato que deseja buscar ? ")
+        print("------------------------------------------------------------------------------")
+        buscar_contato(contato)
+    elif opcao == "3" :
+        contato = input("Insire o Nome da pessoa: ")
+        try:
+            Agenda[contato]
+            print(">>> Contato ja existente")
+        except KeyError:
+            incluir_editar_contato(contato)
+    elif opcao == 5:
+        contato = input("Insire o Nome da pessoa: ")
+        try:
+            Agenda[contato]
+            print(">>> Editando Contato ....")
 
-opcao = input("Escolha uma opção: ")
-if opcao == "1":
-    mostrar_contato()
-elif opcao =="2":
-    contato = input("Qual o nome do contato que deseja buscar ? ")
-    print("------------------------------------------------------------------------------")
-    buscar_contato(contato)
-elif opcao == "3" or opcao == "5":
-    contato = input("Insire o Nome da pessoa: ")
-    telefone = input("Insire o Telefone da pessoa: ")
-    email = input("Insire o E-mail da pessoa: ")
-    endereco = input("Insire o Endereço da pessoa: ")
-    incluir_editar_contato(contato, telefone, email, endereco)
-elif opcao == "4":
-    contato = input("Insire o Nome da Pessoa que deseja Excluir da Agenda: ")
-    excluir_contato(contato)
-elif opcao == "0":
-    exit()
-else:
-    print("Opção Inválida!")
+            incluir_editar_contato(contato)
+        except KeyError:
+            print("não é possivel alterar um contato não existente!")
+    elif opcao == "4":
+        contato = input("Insire o Nome da Pessoa que deseja Excluir da Agenda: ")
+        excluir_contato(contato)
+    elif opcao == "0":
+        break
+    else:
+        print("Opção Inválida!")
 
 
 

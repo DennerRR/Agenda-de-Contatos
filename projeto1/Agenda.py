@@ -63,6 +63,20 @@ def excluir_contato(contato):
         print(error)
 
 
+def exportar_contatos_csv():
+    try:
+        with open("Agenda.csv", "w") as arquivo:
+            for contato in Agenda:
+                telefone = Agenda[contato]["Telefone"]
+                email = Agenda[contato]["E-mail"]
+                endereco = Agenda[contato]["endereco"]
+                arquivo.write("{}; {}; {}; {}\n".format(contato, telefone, email, endereco))
+            print("Agenda Exportada com sucesso")
+    except Exception as e:
+        print("Algum Erro Ocorreu ao exportar contatos !")
+        print(e)
+
+
 def menu():
     print("_______________________________________")
     print("|                                     |")
@@ -73,6 +87,8 @@ def menu():
     print("|3 - Incluir um contato na Agenda     |")
     print("|4 - Excluir um contato da Agenda     |")
     print("|5 - Editar um Contato da Agenda      |")
+    print("|6 - Exportar Contatos Para CSV       |")
+    print("|7 - Importar Contatos de CSV         |")
     print("|0 - Sair do Programa                 |")
     print("|_____________________________________|")
 
@@ -82,17 +98,20 @@ while True:
     opcao = input("Escolha uma opção: ")
     if opcao == "1":
         mostrar_contato()
-    elif opcao =="2":
+    elif opcao == "2":
         contato = input("Qual o nome do contato que deseja buscar ? ")
         print("------------------------------------------------------------------------------")
         buscar_contato(contato)
-    elif opcao == "3" :
+    elif opcao == "3":
         contato = input("Insire o Nome da pessoa: ")
         try:
             Agenda[contato]
             print(">>> Contato ja existente")
         except KeyError:
             incluir_editar_contato(contato)
+    elif opcao == "4":
+        contato = input("Insire o Nome da Pessoa que deseja Excluir da Agenda: ")
+        excluir_contato(contato)
     elif opcao == 5:
         contato = input("Insire o Nome da pessoa: ")
         try:
@@ -102,13 +121,9 @@ while True:
             incluir_editar_contato(contato)
         except KeyError:
             print("não é possivel alterar um contato não existente!")
-    elif opcao == "4":
-        contato = input("Insire o Nome da Pessoa que deseja Excluir da Agenda: ")
-        excluir_contato(contato)
+    elif opcao == "6":
+        exportar_contatos_csv()
     elif opcao == "0":
         break
     else:
         print("Opção Inválida!")
-
-
-

@@ -1,21 +1,4 @@
-
-Agenda = {
-    "Joao": {
-        "Telefone": "99999-1001",
-        "E-mail": "ContatoJoao@solyd.com.br",
-        "endereco": "Rua sebastiao juventus"
-    },
-    "Maria": {
-        "Telefone": "222229-1001",
-        "E-mail": "ContatoMaria@solyd.com.br",
-        "endereco": "avenida 2"
-    },
-    "Pedro": {
-        "Telefone": "33333-33333",
-        "E-mail": "ContatoPedro@solyd.com.br",
-        "endereco": "Avenida3"
-    },
-}
+Agenda = {}
 
 
 def mostrar_contato():
@@ -25,6 +8,7 @@ def mostrar_contato():
             print("------------------------------------------------------------------------------")
     else:
         print("Agenda Vazia!")
+
 
 def buscar_contato(contato):
     try:
@@ -40,21 +24,26 @@ def buscar_contato(contato):
         print(error)
 
 
-def incluir_editar_contato(contato):
+def ler_detalhes():
     telefone = input("Insire o Telefone da pessoa: ")
     email = input("Insire o E-mail da pessoa: ")
     endereco = input("Insire o Endereço da pessoa: ")
+    return telefone, email, endereco
 
+
+def incluir_editar_contato(contato, telefone, email, endereco):
     Agenda[contato] = {
         "Telefone": telefone,
         "E-mail": email,
         "endereco": endereco
     }
+    salvar()
 
 
 def excluir_contato(contato):
     try:
         Agenda.pop(contato)
+        salvar()
         print(">>>>>>>>>>>>>>>>>>>> {} Excluido dos contatos com sucesso!".format(contato))
     except KeyError:
         print("Contato Inexistente")
@@ -63,18 +52,44 @@ def excluir_contato(contato):
         print(error)
 
 
-def exportar_contatos_csv():
+def exportar_contatos_csv(nome_arquivo):
     try:
-        with open("Agenda.csv", "w") as arquivo:
+        with open(nome_arquivo, "w") as arquivo:
             for contato in Agenda:
                 telefone = Agenda[contato]["Telefone"]
                 email = Agenda[contato]["E-mail"]
                 endereco = Agenda[contato]["endereco"]
                 arquivo.write("{}; {}; {}; {}\n".format(contato, telefone, email, endereco))
-            print("Agenda Exportada com sucesso")
-    except Exception as e:
+
+    except Exception as error:
         print("Algum Erro Ocorreu ao exportar contatos !")
-        print(e)
+        print(error)
+
+
+def importar_contatos_csv(nome_arquivo):
+    try:
+        with open(nome_arquivo, "r") as arquivo:
+            linhas = arquivo.readlines()
+            for linha in linhas:
+                detalhes = linha.strip().split(";")
+                nome = detalhes[0]
+                telefone = detalhes[1]
+                email = detalhes[2]
+                endereco = detalhes[3]
+                incluir_editar_contato(nome, telefone, email, endereco)
+    except FileNotFoundError:
+        print("Arquivo não encontrado! ")
+    except Exception as error:
+        print("Erro inesperado Ocorreu ao importar contatos! ")
+        print(error)
+
+
+def salvar():
+    exportar_contatos_csv("database.csv")
+
+
+def carregar():
+    importar_contatos_csv("database.csv")
 
 
 def menu():
@@ -92,7 +107,10 @@ def menu():
     print("|0 - Sair do Programa                 |")
     print("|_____________________________________|")
 
+# EXECUÇÃO DO PROGRAMA
 
+
+carregar()
 while True:
     menu()
     opcao = input("Escolha uma opção: ")
@@ -108,7 +126,8 @@ while True:
             Agenda[contato]
             print(">>> Contato ja existente")
         except KeyError:
-            incluir_editar_contato(contato)
+            telefone, email, endereco = ler_detalhes()
+            incluir_editar_contato(contato, telefone, email, endereco)
     elif opcao == "4":
         contato = input("Insire o Nome da Pessoa que deseja Excluir da Agenda: ")
         excluir_contato(contato)
@@ -117,12 +136,18 @@ while True:
         try:
             Agenda[contato]
             print(">>> Editando Contato ....")
+            telefone, email, endereco = ler_detalhes()
+            incluir_editar_contato(contato, telefone, email, endereco)
 
-            incluir_editar_contato(contato)
         except KeyError:
             print("não é possivel alterar um contato não existente!")
     elif opcao == "6":
-        exportar_contatos_csv()
+        nome_arquivo = input("Digite Nome do Arquivo a ser exportado: ")
+        exportar_contatos_csv(nome_arquivo)
+        print("Agenda Exportada com sucesso")
+    elif opcao == "7":
+        nome_arquivo = input("Digite Nome do Arquivo a ser importado: ")
+        importar_contatos_csv(nome_arquivo)
     elif opcao == "0":
         break
     else:
